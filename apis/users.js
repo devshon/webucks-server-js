@@ -22,8 +22,8 @@ async function createUser(req, res) {
 
 async function sendUser(req, res) {
   try {
+    console.log("### sendUser >>> ");
     const getUser = await prisma.$queryRaw`SELECT * FROM users;`;
-    console.log("### sendUser >>> ", getUser);
 
     res.json(getUser);
   } catch (err) {
