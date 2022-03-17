@@ -10,46 +10,87 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Article {
+model Categories {
   id         Int       @id @default(autoincrement())
-  user_id    Int
-  title      String
-  body       String
+  name       String
   created_at DateTime? @default(now())
-  updated_at DateTime?
-  deleted_at DateTime?
-  users      User      @relation(fields: [user_id], references: [id])
-  comments   Comment[]
 
-  @@index([user_id], name: "user_id")
-  @@map("articles")
+  Products Products[]
+  @@map("categories")
 }
 
-model Comment {
-  id         Int       @id @default(autoincrement())
-  article_id Int
-  user_id    Int
-  body       String
-  created_at DateTime? @default(now())
-  updated_at DateTime?
-  deleted_at DateTime?
-  articles   Article   @relation(fields: [article_id], references: [id])
-  users      User      @relation(fields: [user_id], references: [id])
+model Products {
+  id           Int        @id @default(autoincrement())
+  korean_name  String     @unique
+  english_name String?
+  category_id  Int
+  created_at   DateTime?  @default(now())
+  categories   Categories @relation(fields: [category_id], references: [id])
 
-  @@index([article_id], name: "article_id")
-  @@index([user_id], name: "user_id")
-  @@map("comments")
+  ProductImages     ProductImages[]
+  ProductsAllergies ProductsAllergies[]
+  Nutritions        Nutritions[]
+  @@index([category_id], name: "category_id")
+  @@map("products")
 }
 
-model User {
+model ProductImages {
   id         Int       @id @default(autoincrement())
-  email      String    @unique
-  password   String
+  image_url  String
+  product_id Int
   created_at DateTime? @default(now())
-  updated_at DateTime?
-  deleted_at DateTime?
-  articles   Article[]
-  comments   Comment[]
+  products   Products  @relation(fields: [product_id], references: [id])
+
+  @@index([product_id], name: "product_id")
+  @@map("product_images")
+}
+
+model Allergies {
+  id         Int       @id @default(autoincrement())
+  name       String    @unique
+  created_at DateTime? @default(now())
+
+  ProductsAllergies ProductsAllergies[]
+  @@map("allergies")
+}
+
+model ProductsAllergies {
+  id         Int       @id @default(autoincrement())
+  product_id Int
+  allergy_id Int
+  created_at DateTime? @default(now())
+  products   Products  @relation(fields: [product_id], references: [id])
+  allergies  Allergies @relation(fields: [allergy_id], references: [id])
+
+
+  @@index([product_id], name: "product_id")
+  @@index([allergy_id], name: "allergy_id")
+  @@map("products_allergies")
+}
+
+model Nutritions {
+  id         Int       @id @default(autoincrement())
+  product_id Int
+  caffein    Float
+  fat        Float
+  sugar      Float
+  sodium     Float
+  products   Products  @relation(fields: [product_id], references: [id])
+  created_at DateTime? @default(now())
+
+  @@index([product_id], name: "product_id")
+  @@map("nutritions")
+}
+
+model Users {
+  id            Int       @id @default(autoincrement())
+  email         String    @unique
+  password      String
+  username      String?
+  address       String?
+  phone_number  String?
+  policy_agreed Boolean   @default(true)
+  created_at    DateTime? @default(now())
 
   @@map("users")
 }
