@@ -10,7 +10,7 @@ const {
   sendProductOne,
 } = require("./apis/products");
 
-const { createUser, sendUser } = require("./apis/users");
+const { createUser, sendUser, updateUserPassword } = require("./apis/users");
 
 const app = express();
 app.use(express.json());
@@ -24,6 +24,9 @@ app.get("/users", sendUser);
 
 // POST
 app.post("/users/signup", createUser);
+
+// PUT
+app.put("/users", updateUserPassword);
 
 const server = http.createServer(app);
 

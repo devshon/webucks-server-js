@@ -1,102 +1,65 @@
-function sendCategorise(req, res) {
-  res.json({
-    data: [
-      {
-        id: 1,
-        name: "콜드 브루 커피",
-      },
-      {
-        id: 2,
-        name: "브루드 커피",
-      },
-      {
-        id: 3,
-        name: "에스프레소",
-      },
-      {
-        id: 4,
-        name: "프라푸치노",
-      },
-      {
-        id: 5,
-        name: "블렌디드",
-      },
-    ],
-  });
+const { PrismaClient } = require("@prisma/client");
+
+const prisma = new PrismaClient();
+
+async function sendCategorise(req, res) {
+  try {
+    console.log("### sendCategories >>> ");
+
+    const getCatagories = await prisma.$queryRaw`
+    SELECT * FROM categories;`;
+
+    res.json(getCatagories);
+  } catch (err) {
+    console.log("### sendCategories err >>> ", err);
+    return res.status(500).json({ message: err.message });
+  }
 }
 
-function sendProducts(req, res) {
-  res.json({
-    data: [
-      {
-        id: 1,
-        koreanName: "나이트로 바닐라크림",
-        englishName: "Nitro Vanilla Cream",
-        category: "콜드 브루 커피",
-        categoryId: 1,
-        imageUrl:
-          "https://image.istarbucks.co.kr/upload/store/skuimg/2021/04/[9200000002487]_20210426091745467.jpg",
-      },
-      {
-        id: 2,
-        koreanName: "아이스 카페 아메리카노",
-        englishName: "Ice Cafe Americano",
-        category: "에스프레소",
-        categoryId: 3,
-        imageUrl:
-          "https://image.istarbucks.co.kr/upload/store/skuimg/2021/04/[110563]_20210426095937808.jpg",
-      },
-      {
-        id: 3,
-        koreanName: "돌체 콜드 브루",
-        englishName: "Dolce Cold Brew",
-        category: "콜드 브루 커피",
-        categoryId: 1,
-        imageUrl:
-          "https://image.istarbucks.co.kr/upload/store/skuimg/2021/04/[9200000002081]_20210415133656839.jpg",
-      },
-      {
-        id: 4,
-        koreanName: "콜드 브루 몰트",
-        englishName: "Cold Brew Malt",
-        category: "콜드 브루 커피",
-        categoryId: 1,
-        imageUrl:
-          "https://image.istarbucks.co.kr/upload/store/skuimg/2021/02/[9200000001636]_20210225093600536.jpg",
-      },
-      {
-        id: 5,
-        koreanName: "에스프레소 콘 파나",
-        englishName: "Espresso Con Panna",
-        category: "에스프레소",
-        categoryId: 3,
-        imageUrl:
-          "https://image.istarbucks.co.kr/upload/store/skuimg/2021/04/[30]_20210415144252244.jpg",
-      },
-    ],
-  });
+async function sendProducts(req, res) {
+  try {
+    console.log("### sendProducts >>> ");
+
+    const getProducts = await prisma.$queryRaw`
+    SELECT * FROM products;`;
+
+    res.json(getProducts);
+  } catch (err) {
+    console.log("### getProducts err >>> ", err);
+    return res.status(500).json({ message: err.message });
+  }
 }
 
-function sendProductOne(req, res) {
-  res.json({
-    data: {
-      id: 2,
-      koreanName: "아이스 카페 아메리카노",
-      englishName: "Iced Caffe Americano",
-      description:
-        "진한 에스프레소에 시원한 정수물과 얼음을 더햐여 스타벅스의 깔끔하고 강렬한 에스프레소를 가장 부드럽고 시원하게 즐길 수 있는 커피",
-      imageURL:
-        "https://image.istarbucks.co.kr/upload/store/skuimg/2015/08/[110563]_20150813222100303.jpg",
-      allergens: [],
-      nutritionInfo: {
-        calories: "15",
-        fat: "0g",
-        sodium: "15mg",
-        protein: "1g",
-        caffeine: "225mg",
-      },
-    },
-  });
+async function sendProductOne(req, res) {
+  try {
+    console.log("### sendProductOne >>> ");
+
+    const getProductOne = await prisma.$queryRaw`
+    SELECT
+      products.id,
+      products.korean_name,
+      products.english_name,
+      product_images.image_url,
+      allergies.name as allergies,
+      nutritions.caffein,
+      nutritions.fat,
+      nutritions.sugar,
+      nutritions.sodium
+    FROM products
+    JOIN product_images 
+    ON products.id = product_images.product_id
+    JOIN nutritions
+    ON products.id = nutritions.product_id
+    JOIN products_allergies 
+    ON products.id = products_allergies.product_id
+    JOIN allergies
+    ON allergies.id = products_allergies.allergy_id;`;
+
+    res.json(getProductOne);
+  } catch (err) {
+    console.log("### getProductOne err >>> ", err);
+    return res.status(500).json({ message: err.message });
+  }
 }
 
 module.exports = { sendProducts, sendProductOne, sendCategorise };
