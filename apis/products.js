@@ -7,7 +7,9 @@ async function sendCategorise(req, res) {
     console.log("### sendCategories >>> ");
 
     const getCatagories = await prisma.$queryRaw`
-    SELECT * FROM categories;`;
+    SELECT * FROM
+      categories;
+    `;
 
     res.json(getCatagories);
   } catch (err) {
@@ -21,11 +23,13 @@ async function sendProducts(req, res) {
     console.log("### sendProducts >>> ");
 
     const getProducts = await prisma.$queryRaw`
-    SELECT * FROM products;`;
+    SELECT * FROM
+      products;
+    `;
 
     res.json(getProducts);
   } catch (err) {
-    console.log("### getProducts err >>> ", err);
+    console.log("### sendProducts err >>> ", err);
     return res.status(500).json({ message: err.message });
   }
 }
@@ -39,15 +43,15 @@ async function sendProductOne(req, res) {
       products.id,
       products.korean_name,
       products.english_name,
-      product_images.image_url,
+      products_images.image_url,
       allergies.name as allergies,
       nutritions.caffein,
       nutritions.fat,
       nutritions.sugar,
       nutritions.sodium
     FROM products
-    JOIN product_images 
-    ON products.id = product_images.product_id
+    JOIN products_images 
+    ON products.id = products_images.product_id
     JOIN nutritions
     ON products.id = nutritions.product_id
     JOIN products_allergies 
@@ -57,9 +61,51 @@ async function sendProductOne(req, res) {
 
     res.json(getProductOne);
   } catch (err) {
-    console.log("### getProductOne err >>> ", err);
+    console.log("### sendProductOne err >>> ", err);
     return res.status(500).json({ message: err.message });
   }
 }
 
-module.exports = { sendProducts, sendProductOne, sendCategorise };
+async function createLike(req, res) {
+  try {
+    console.log("### createLike >>> ");
+    const { productId, userId } = req.body;
+    const createdLike = await prisma.$queryRaw`
+    INSERT INTO
+      products_likes (product_id, user_id)
+    VALUE
+      (${productId},${userId});
+    `;
+    return res.status(201).json({ message: "CREATED" });
+  } catch (err) {
+    console.log("### createLike err >>> ", err);
+    return res.status(500).json({ message: err.message });
+  }
+}
+
+async function deleteLike(req, res) {
+  try {
+    console.log("### deleteLike >>> ");
+    const { productId, userId } = req.body;
+    const deltedLike = await prisma.$queryRaw`
+    DELETE FROM 
+	    products_likes 
+    WHERE 
+	    product_id=${productId}
+    AND
+ 	    user_id=${userId};
+    `;
+    return res.status(201).json({ message: "DELETED" });
+  } catch (err) {
+    console.log("### deleteLike err >>> ", err);
+    return res.status(500).json({ message: err.message });
+  }
+}
+
+module.exports = {
+  sendProducts,
+  sendProductOne,
+  sendCategorise,
+  createLike,
+  deleteLike,
+};

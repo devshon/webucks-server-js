@@ -8,6 +8,8 @@ const {
   sendCategorise,
   sendProducts,
   sendProductOne,
+  createLike,
+  deleteLike,
 } = require("./apis/products");
 
 const { createUser, sendUser, updateUserPassword } = require("./apis/users");
@@ -24,9 +26,13 @@ app.get("/users", sendUser);
 
 // POST
 app.post("/users/signup", createUser);
+app.post("/products/likes", createLike);
 
 // PUT
 app.put("/users", updateUserPassword);
+
+// DELETE
+app.delete("/products/likes", deleteLike);
 
 const server = http.createServer(app);
 

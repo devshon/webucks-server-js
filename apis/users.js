@@ -11,9 +11,11 @@ async function createUser(req, res) {
       return res.status(400).json({ message: "PASSWORD_TOO_SHORT" });
     }
     const createdUser = await prisma.$queryRaw`
-      INSERT INTO users(email, password)
-      VALUES (${email}, ${password});
-    `;
+      INSERT INTO
+        users (email, password)
+      VALUES
+        (${email}, ${password});
+      `;
 
     return res.status(201).json({ message: "CREATED" });
   } catch (err) {
@@ -28,11 +30,14 @@ async function createUser(req, res) {
 async function sendUser(req, res) {
   try {
     console.log("### sendUser >>> ");
-    const getUser = await prisma.$queryRaw`SELECT * FROM users;`;
+    const getUser = await prisma.$queryRaw`
+    SELECT * FROM
+      users;
+    `;
 
     res.json(getUser);
   } catch (err) {
-    console.log("### createUser err >> ", err);
+    console.log("### sendUser err >> ", err);
     return res.status(500).json({ message: err.message });
   }
 }
@@ -41,9 +46,15 @@ async function updateUserPassword(req, res) {
   try {
     console.log("### updateUserPassword >>> ");
     const { newPassword, id } = req.body;
-    console.log("newPassword >> ", newPassword, "id >> ", id);
+
     const updatePassword = await prisma.$queryRaw`
-    UPDATE users SET password=${newPassword} WHERE id=${id}`;
+    UPDATE
+      users
+    SET
+      password=${newPassword} 
+    WHERE
+      id=${id};
+    `;
     return res.status(201).json({ message: "UPDATED" });
   } catch (err) {
     console.log("### updateUserPassword err >> ", err);

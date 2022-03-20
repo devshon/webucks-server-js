@@ -27,14 +27,15 @@ model Products {
   created_at   DateTime?  @default(now())
   categories   Categories @relation(fields: [category_id], references: [id])
 
-  ProductImages     ProductImages[]
+  ProductsImages    ProductsImages[]
   ProductsAllergies ProductsAllergies[]
-  Nutritions        Nutritions[]
+  ProductsLikes     ProductsLikes[]
+  Nutritions        Nutritions?
   @@index([category_id], name: "category_id")
   @@map("products")
 }
 
-model ProductImages {
+model ProductsImages {
   id         Int       @id @default(autoincrement())
   image_url  String
   product_id Int
@@ -42,7 +43,7 @@ model ProductImages {
   products   Products  @relation(fields: [product_id], references: [id])
 
   @@index([product_id], name: "product_id")
-  @@map("product_images")
+  @@map("products_images")
 }
 
 model Allergies {
@@ -70,7 +71,7 @@ model ProductsAllergies {
 
 model Nutritions {
   id         Int       @id @default(autoincrement())
-  product_id Int
+  product_id Int       @unique
   caffein    Float
   fat        Float
   sugar      Float
@@ -92,5 +93,19 @@ model Users {
   policy_agreed Boolean   @default(true)
   created_at    DateTime? @default(now())
 
+  ProductsLikes ProductsLikes[]
   @@map("users")
+}
+
+model ProductsLikes {
+  id         Int       @id @default(autoincrement())
+  product_id Int
+  user_id    Int
+  created_at DateTime? @default(now())
+  products   Products  @relation(fields: [product_id], references: [id])
+  users      Users     @relation(fields: [user_id], references: [id])
+
+  @@index([product_id], name: "product_id")
+  @@index([user_id], name: "user_id")
+  @@map("products_likes")
 }
