@@ -12,7 +12,13 @@ const {
   deleteLike,
 } = require("./apis/products");
 
-const { createUser, sendUser, updateUserPassword } = require("./apis/users");
+const {
+  createUser,
+  sendUser,
+  updateUserPassword,
+  loginUser,
+  sendIdentification,
+} = require("./apis/users");
 
 const app = express();
 app.use(express.json());
@@ -23,9 +29,11 @@ app.get("/products/categories", sendCategorise);
 app.get("/products", sendProducts);
 app.get("/products/2", sendProductOne);
 app.get("/users", sendUser);
+app.get("/users/verification", sendIdentification);
 
 // POST
 app.post("/users/signup", createUser);
+app.post("/users/login", loginUser);
 app.post("/products/likes", createLike);
 
 // PUT
