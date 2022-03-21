@@ -2,12 +2,16 @@ const { PrismaClient } = require("@prisma/client");
 
 const prisma = new PrismaClient();
 
+// 카테고리 리스트 API
 async function sendCategorise(req, res) {
   try {
     console.log("### sendCategories >>> ");
 
     const getCatagories = await prisma.$queryRaw`
-    SELECT * FROM
+    SELECT
+      id,
+      name
+    FROM
       categories;
     `;
 
@@ -18,12 +22,18 @@ async function sendCategorise(req, res) {
   }
 }
 
+// 상품 리스트 API
 async function sendProducts(req, res) {
   try {
     console.log("### sendProducts >>> ");
 
     const getProducts = await prisma.$queryRaw`
-    SELECT * FROM
+    SELECT
+      id,
+      korean_nmae,
+      english_name,
+      category_id
+    FROM
       products;
     `;
 
@@ -34,6 +44,7 @@ async function sendProducts(req, res) {
   }
 }
 
+// 상품리스트 상세정보 JOIN API
 async function sendProductOne(req, res) {
   try {
     console.log("### sendProductOne >>> ");
@@ -57,7 +68,8 @@ async function sendProductOne(req, res) {
     JOIN products_allergies 
     ON products.id = products_allergies.product_id
     JOIN allergies
-    ON allergies.id = products_allergies.allergy_id;`;
+    ON allergies.id = products_allergies.allergy_id;
+    `;
 
     res.json(getProductOne);
   } catch (err) {
@@ -66,6 +78,7 @@ async function sendProductOne(req, res) {
   }
 }
 
+// 상품 좋아요 데이터 생성 API
 async function createLike(req, res) {
   try {
     console.log("### createLike >>> ");
@@ -83,6 +96,7 @@ async function createLike(req, res) {
   }
 }
 
+// 상품 좋아요 데이터 삭제 API
 async function deleteLike(req, res) {
   try {
     console.log("### deleteLike >>> ");
