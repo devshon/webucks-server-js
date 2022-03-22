@@ -50,6 +50,7 @@ async function createUser(req, res) {
     if (password.length < 8) {
       error.message = "PASSWORD_TOO_SHORT";
       error.statusCode = 400;
+      throw error;
     }
 
     const salt = bc.genSaltSync();
