@@ -1,20 +1,23 @@
 const UserDao = require("../models/UsersDao");
+const errorGenerator = require("../utils/errorGenerator");
 const bc = require("bcrypt"); // 해쉬암호화 라이브러리
 const jwt = require("jsonwebtoken"); // 웹 토큰 생성 라이브러리
 
 async function signupUser(email, password) {
   console.log("### service signupUser");
   if (password.length < 8) {
-    const error = new Error("PASSWORD_TOO_SHORT");
-    error.statusCode = 400;
-    throw error;
+    throw await errorGenerator({
+      statusCode: 400,
+      message: "PASSWORD_TOO_SHORT",
+    });
   }
   const user = await UserDao.getUserByEmail(email);
 
   if (user.length !== 0) {
-    const error = new Error("EXISTING_USER");
-    error.statusCode = 409;
-    throw error;
+    throw await errorGenerator({
+      statusCode: 409,
+      message: "EXISTING_USER",
+    });
   }
 
   const hashPw = bc.hashSync(password, bc.genSaltSync());
@@ -40,9 +43,10 @@ async function loginUser(email, password) {
   const isPwTrue = bc.compareSync(password, getUser[0]?.password);
 
   if (getUser.length === 0 || !isPwTrue) {
-    const error = new Error("INVALID_USER");
-    error.statusCode = 400;
-    throw error;
+    throw await errorGenerator({
+      statusCode: 400,
+      message: "INVALID_USER",
+    });
   }
 
   const user = { id: getUser[0].id };
@@ -57,10 +61,26 @@ async function getIdentification(token) {
 
   return identify;
 }
+
+async function updateUserPassword(newPassword, id) {
+  console.log("### service updateUserPassword");
+
+  if (newPassword.length < 8) {
+    throw await errorGenerator({
+      statusCode: 400,
+      message: "PASSWORD_TOO_SHORT",
+    });
+  }
+
+  const hashPw = bc.hashSync(newPassword, bc.genSaltSync());
+
+  await UserDao.updateUserPassword(hashPw, id);
+}
 module.exports = {
   signupUser,
   getUserByEmail,
   getUsers,
   loginUser,
   getIdentification,
+  updateUserPassword,
 };

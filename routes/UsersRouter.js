@@ -11,4 +11,5 @@ router.get("/verification", UsersController.getIdentification);
 router.post("/signup", UsersController.signupUser);
 router.post("/login", UsersController.loginUser);
 
+router.put("/", UsersController.updateUserPassword);
 module.exports = router;
