@@ -13,7 +13,7 @@ async function getProducts() {
 }
 
 async function getProductOne(id) {
-  console.log("### service getProductOne");
+  console.log("### service getProductOne", id);
 
   return await ProductsDao.getProductOne(id);
 }

@@ -6,10 +6,6 @@ async function signupUser(req, res, next) {
     console.log("### controller signupUser");
     const { email, password } = req.body;
 
-    if (!email || !password) {
-      throw await errorGenerator({ statusCode: 400, message: "KEY_ERROR" });
-    }
-
     await UsersService.signupUser(email, password);
 
     return res.status(200).json({ message: "SUCCESS" });
@@ -36,10 +32,6 @@ async function loginUser(req, res, next) {
     console.log("### controller loginUser");
     const { email, password } = req.body;
 
-    if (!email || !password) {
-      throw await errorGenerator({ statusCode: 400, message: "KEY_ERROR" });
-    }
-
     const token = await UsersService.loginUser(email, password);
 
     return res.status(200).json({ message: "SUCCESS", token });
@@ -62,6 +54,13 @@ async function getIdentification(req, res, next) {
     }
 
     const identify = await UsersService.getIdentification(token);
+
+    if (!identify) {
+      throw await errorGenerator({
+        statusCode: 400,
+        message: "INCORRECT_TOKEN",
+      });
+    }
 
     return res.status(200).json({ message: "SUCCESS", user: identify.user });
   } catch (err) {

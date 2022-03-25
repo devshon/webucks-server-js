@@ -56,4 +56,25 @@ async function updateUserPassword(newPassword, id) {
       id=${id};
     `;
 }
-module.exports = { signupUser, getUserByEmail, getUsers, updateUserPassword };
+
+async function getUserById(id) {
+  console.log("### dao getUserById");
+
+  return await prisma.$queryRaw`
+      SELECT
+        id,
+        email,
+        password
+      FROM
+        users
+      WHERE
+        id=${id}
+      `;
+}
+module.exports = {
+  signupUser,
+  getUserByEmail,
+  getUsers,
+  updateUserPassword,
+  getUserById,
+};

@@ -30,7 +30,7 @@ async function getProducts(req, res, next) {
 async function getProductOne(req, res, next) {
   try {
     console.log("### controller getProductOne");
-    const { id } = req.body;
+    const { id } = req.params;
 
     if (!id) {
       throw await errorGenerator({
@@ -40,6 +40,13 @@ async function getProductOne(req, res, next) {
     }
 
     const product = await ProductsService.getProductOne(id);
+
+    if (product.length === 0) {
+      throw await errorGenerator({
+        statusCode: 404,
+        message: "NOT_FOUND",
+      });
+    }
 
     return res.status(200).json({ message: "SUCCESS", product });
   } catch (err) {

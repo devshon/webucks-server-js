@@ -50,16 +50,14 @@ async function loginUser(email, password) {
   }
 
   const user = { id: getUser[0].id };
-  const token = jwt.sign({ user }, process.env.SECRET_KEY);
 
-  return token;
+  return jwt.sign({ user }, process.env.SECRET_KEY);
 }
 
 async function getIdentification(token) {
   console.log("### service getIdentification");
-  const identify = jwt.verify(token, process.env.SECRET_KEY);
 
-  return identify;
+  return jwt.verify(token, process.env.SECRET_KEY);
 }
 
 async function updateUserPassword(newPassword, id) {
@@ -74,8 +72,15 @@ async function updateUserPassword(newPassword, id) {
 
   const hashPw = bc.hashSync(newPassword, bc.genSaltSync());
 
-  await UserDao.updateUserPassword(hashPw, id);
+  return await UserDao.updateUserPassword(hashPw, id);
 }
+
+async function getUserById(id) {
+  console.log("### service getUserById");
+
+  return await UserDao.getUserById(id);
+}
+
 module.exports = {
   signupUser,
   getUserByEmail,
@@ -83,4 +88,5 @@ module.exports = {
   loginUser,
   getIdentification,
   updateUserPassword,
+  getUserById,
 };
