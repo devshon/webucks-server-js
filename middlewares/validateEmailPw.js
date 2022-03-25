@@ -2,7 +2,7 @@ const errorGenerator = require("../utils/errorGenerator");
 
 async function vaildateEmailPw(req, res, next) {
   try {
-    console.log("### vaildateEmailPw", req.body);
+    console.log("### vaildateEmailPw");
 
     const { email, password } = req.body;
     if (!email || !password) {
